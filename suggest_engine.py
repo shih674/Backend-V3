@@ -14,27 +14,23 @@ state_list = ['wait_user', 'ask_interest', 'first_question', 'question_loop_Fals
 # 各場景實作細節=========================================
 def state6to1(json_object):
     print('::推薦系統訊息:: in sugg.... state6to1 - start')
-    # 更新現在狀態
+    # 更新現在狀態 到1
     json_object['json']['cur_state'] = 'basic_info'
     print('::推薦系統訊息:: in sugg.... state6to1 - finish')
     return json_object['json']
 
 def state6to1_1(json_object):
-    print('::推薦系統訊息:: in sugg.... state6to1_1 - start')
-    # 讀取、更新收禮者姓名
-    user_input = json_object['outside']['msg']
-    json_object['json']['subject'] = user_input
-
+    print('::推薦系統訊息:: in sugg.... state6to1 - start')
     # 更新現在狀態
     json_object['json']['cur_state'] = 'basic_info_1'
-    print('::推薦系統訊息:: in sugg.... state6to1_1 - finish')
+    print('::推薦系統訊息:: in sugg.... state6to1 - finish')
     return json_object['json']
 
 def state1_1to1_2(json_object):
     print('::推薦系統訊息:: in sugg.... state1_1to1_2 - start')
-    # 讀取、更新收禮者性別
-    gender = json_object['outside']['msg']['gender']
-    json_object['json']['gender'] = gender
+    # 讀取、更新收禮者姓名
+    user_input = json_object['outside']['msg']
+    json_object['json']['subject'] = user_input
 
     # 更新現在狀態
     json_object['json']['cur_state'] = 'basic_info_2'
@@ -43,36 +39,47 @@ def state1_1to1_2(json_object):
 
 def state1_2to1_3(json_object):
     print('::推薦系統訊息:: in sugg.... state1_2to1_3 - start')
-    # 讀取、更新收禮者年齡
-    age = json_object['outside']['msg']['age']
-    json_object['json']['age'] = int(age)
+    # 讀取、更新收禮者性別
+    gender = json_object['outside']['msg']['gender']
+    json_object['json']['gender'] = gender
 
     # 更新現在狀態
     json_object['json']['cur_state'] = 'basic_info_3'
     print('::推薦系統訊息:: in sugg.... state1_2to1_3 - finish')
     return json_object['json']
 
-
 def state1_3to1_4(json_object):
     print('::推薦系統訊息:: in sugg.... state1_3to1_4 - start')
-    # 讀取、更新收禮者關係
-    relationship = json_object['outside']['msg']['relationship']
-    json_object['json']['age'] = relationship
+    # 讀取、更新收禮者年齡
+    age = json_object['outside']['msg']['age']
+    json_object['json']['age'] = int(age)
 
     # 更新現在狀態
     json_object['json']['cur_state'] = 'basic_info_4'
     print('::推薦系統訊息:: in sugg.... state1_3to1_4 - finish')
     return json_object['json']
 
+
 def state1_4to1_5(json_object):
     print('::推薦系統訊息:: in sugg.... state1_4to1_5 - start')
+    # 讀取、更新收禮者關係
+    relationship = json_object['outside']['msg']['relationship']
+    json_object['json']['age'] = relationship
+
+    # 更新現在狀態
+    json_object['json']['cur_state'] = 'basic_info_5'
+    print('::推薦系統訊息:: in sugg.... state1_4to1_5 - finish')
+    return json_object['json']
+
+def state1_5to2(json_object):
+    print('::推薦系統訊息:: in sugg.... state1_5to2 - start')
     # 讀取、更新購買禮物預算
     budget = json_object['outside']['msg']['budget']
     json_object['json']['budget'] = budget
 
     # 更新現在狀態
-    json_object['json']['cur_state'] = 'basic_info_5'
-    print('::推薦系統訊息:: in sugg.... state1_4to1_5 - finish')
+    json_object['json']['cur_state'] = 'question_all'
+    print('::推薦系統訊息:: in sugg.... state1_5to2 - finish')
     return json_object['json']
 
 def state1to2(json_object):
@@ -257,9 +264,23 @@ def main(userdata):
     if cur_state == 'end_conversation':
         json_return = state6to1(json_object)
     elif cur_state == 'basic_info_1':
-        pass
+        json_return = state1_1to1_2(json_object)
+    elif cur_state == 'basic_info_2':
+        json_return = state1_2to1_3(json_object)
+    elif cur_state == 'basic_info_3':
+        json_return = state1_3to1_4(json_object)
+    elif cur_state == 'basic_info_4':
+        json_return = state1_4to1_5(json_object)
+    elif cur_state == 'basic_info_5':
+        json_return = state1_5to2(json_object)
+
     elif cur_state == 'wait_user':
         json_return = state1to2(json_object)
+
+    # 不確定，再想想
+    elif cur_state == 'question_all':
+        json_return = state2to3(json_object)
+
     elif cur_state == 'ask_interest':
         json_return = state2to3(json_object)
     elif cur_state == 'first_question':
