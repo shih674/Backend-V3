@@ -60,9 +60,10 @@ def get_tag_from_productid(tag_name_list=["男裝", "牛仔"]):
                 tag_dic[row[0]] = 1
         valid_tag = []
         for key in tag_dic.keys():
-            if tag_dic[key] > 300:
+            if tag_dic[key] > 10:
                 valid_tag.append(key)
-        index = randint(0, len(valid_tag) - 1)
+        print(valid_tag)
+        index = randint(0, len(valid_tag))
         product_cnt = len(pid_dic)
         conn.close()
         return {

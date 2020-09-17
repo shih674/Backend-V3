@@ -1,0 +1,15 @@
+{
+    "userId": "test0917002",
+    "cur_state": "ask_interest",
+    "subject": "小鬼",
+    "gender": "男",
+    "age": "粉絲",
+    "relationship": "仇人",
+    "budget": 300,
+    "9question": "None",
+    "6question": "None",
+    "open_question": "None",
+    "conds": [],
+    "next_tag": "None",
+    "product_cnt": -1
+}

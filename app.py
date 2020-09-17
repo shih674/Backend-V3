@@ -16,7 +16,7 @@ def hello():
 
 # 對話引擎
 @app.route('/lineapi', methods=['POST'])
-def dialog():
+def server_linebot():
     try:
         source = 'linebot' #紀錄資料來源
         userId  = request.json["userId"] # 使用者ID: 用於讀取json檔內容
@@ -24,12 +24,12 @@ def dialog():
         print("::Dialog SYS:: 資料讀取成功")
     except Exception as e:
         print(f'::SYS錯誤訊息::\n{e}\n==========================================')
-        return jsonify({"except": '\n\n'+e})
+        return jsonify({"except": '\n\n'+str(e)})
     return jsonify(dialogsys.main(source, userId, message))
 
 # 對話引擎
 @app.route('/webapi', methods=['POST'])
-def dialog():
+def server_web():
     try:
         source = 'web' #紀錄資料來源
         userId  = request.json["userId"] # 使用者ID: 用於讀取json檔內容

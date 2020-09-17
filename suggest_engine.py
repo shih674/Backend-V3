@@ -40,7 +40,7 @@ def state1_1to1_2(json_object):
 def state1_2to1_3(json_object):
     print('::推薦系統訊息:: in sugg.... state1_2to1_3 - start')
     # 讀取、更新收禮者性別
-    gender = json_object['outside']['msg']['gender']
+    gender = json_object['outside']['msg']
     json_object['json']['gender'] = gender
 
     # 更新現在狀態
@@ -51,7 +51,7 @@ def state1_2to1_3(json_object):
 def state1_3to1_4(json_object):
     print('::推薦系統訊息:: in sugg.... state1_3to1_4 - start')
     # 讀取、更新收禮者年齡
-    age = json_object['outside']['msg']['age']
+    age = json_object['outside']['msg']
     json_object['json']['age'] = int(age)
 
     # 更新現在狀態
@@ -63,8 +63,8 @@ def state1_3to1_4(json_object):
 def state1_4to1_5(json_object):
     print('::推薦系統訊息:: in sugg.... state1_4to1_5 - start')
     # 讀取、更新收禮者關係
-    relationship = json_object['outside']['msg']['relationship']
-    json_object['json']['age'] = relationship
+    relationship = json_object['outside']['msg']
+    json_object['json']['relationship'] = relationship
 
     # 更新現在狀態
     json_object['json']['cur_state'] = 'basic_info_5'
@@ -74,8 +74,8 @@ def state1_4to1_5(json_object):
 def state1_5to2(json_object):
     print('::推薦系統訊息:: in sugg.... state1_5to2 - start')
     # 讀取、更新購買禮物預算
-    budget = json_object['outside']['msg']['budget']
-    json_object['json']['budget'] = budget
+    budget = json_object['outside']['msg']
+    json_object['json']['budget'] = int(budget)
 
     # 更新現在狀態
     json_object['json']['cur_state'] = 'question_all'
@@ -114,10 +114,9 @@ def state1to2(json_object):
 
 def state2to3(json_object):
     print('::推薦系統訊息:: in sugg.... state2to3 - start')
-    # 讀取需要的input: 使用者輸入了興趣類別
+    # 讀取需要的input: 使用者輸入了開放式問題的答案
     user_input = json_object['outside']['msg']
-    # 更新贈禮對象
-    json_object['json']['interested_things'] = user_input
+    json_object['json']['open_question'] = user_input
     #    tags = {'conds': json_object['json']['conds']}
     # 呼叫產品服務A
     response = callAPITags(json_object['json']['conds'])
@@ -243,7 +242,7 @@ def decisionmix(json_object):
 
 
 # 主程式，系統會先跑這支函式 ========================
-def main(userdata):
+def main(source,userdata):
     # 先整理對話引擎傳來的 使用者資料&前端訊息
     try:
         # 使用者資料
@@ -261,8 +260,10 @@ def main(userdata):
 
     # 根據現在的狀態(cur_state)進入function
     cur_state = json_object['json']['cur_state']
-    if cur_state == 'end_conversation':
+    if cur_state == 'end_conversation' and source == 'web':
         json_return = state6to1(json_object)
+    elif cur_state == 'end_conversation' and source == 'linebot':
+        json_return = state6to1_1(json_object)
     elif cur_state == 'basic_info_1':
         json_return = state1_1to1_2(json_object)
     elif cur_state == 'basic_info_2':
@@ -274,10 +275,9 @@ def main(userdata):
     elif cur_state == 'basic_info_5':
         json_return = state1_5to2(json_object)
 
-    elif cur_state == 'wait_user':
+    elif cur_state == 'basic_info':
         json_return = state1to2(json_object)
 
-    # 不確定，再想想
     elif cur_state == 'question_all':
         json_return = state2to3(json_object)
 

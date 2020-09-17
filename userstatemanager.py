@@ -44,6 +44,7 @@ def SetInitialValue(userId):
     return_obj['9question'] = 'None'
     return_obj['6question'] = 'None'
     return_obj['open_question'] = 'None'
+    return_obj['interested_things'] = ''
     return_obj['conds']     = []  # 感興趣的標籤
     return_obj['next_tag']  = "None"  # 待詢問標籤
     return_obj['product_cnt']       = -1  # 待選禮物數，設定-1為初始值
@@ -93,7 +94,7 @@ def GetUserStae(request_source, userid):
     return content
 
 
-def UpdateUserState(request_source, userid, cur_state, subject, gender, age, relationship, budget,question9, question6, question_open, conds, next_tag, product_cnt):
+def UpdateUserState(request_source, userid, cur_state, subject, gender, age, relationship, budget, question9, question6, question_open, conds, next_tag, product_cnt):
     '''
     更新使用者狀態
     :param request_source: 必須輸入
@@ -149,7 +150,7 @@ def UpdateUserState(request_source, userid, cur_state, subject, gender, age, rel
         return True, 'saves SUCCESS'
 
     save_obj['cur_state'] = cur_state  # 現在狀態
-    save_obj['subject'] = subject  # 送禮對象
+    save_obj['subject']   = subject  # 送禮對象
     save_obj['gender']    = gender
     save_obj['age']       = age
     save_obj['relationship'] = relationship
