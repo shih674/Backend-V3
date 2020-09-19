@@ -51,7 +51,7 @@ def SetInitialValue(userId):
     return return_obj
 
 
-def GetUserStae(request_source, userid):
+def GetUserState(request_source, userid):
     '''
     讀取使用者資料JSON檔，並回傳
     :input request_source: str 訊息來源LineBot或者Web

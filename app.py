@@ -18,13 +18,15 @@ def hello():
 @app.route('/lineapi', methods=['POST'])
 def server_linebot():
     try:
-        source = 'linebot' #紀錄資料來源
-        userId  = request.json["userId"] # 使用者ID: 用於讀取json檔內容
-        message = request.json["msg"] # 使用者輸入的文字訊息
+        source = 'linebot'  # 紀錄資料來源
+        userId  = request.json["userId"]  # 使用者ID: 用於讀取json檔內容
+        message = request.json["msg"]  # 使用者輸入的文字訊息
         print("::Dialog SYS:: 資料讀取成功")
     except Exception as e:
         print(f'::SYS錯誤訊息::\n{e}\n==========================================')
         return jsonify({"except": '\n\n'+str(e)})
+    if message == 'empty':
+        return jsonify(dialogsys.main(source, userId, message, request.json['postback']))
     return jsonify(dialogsys.main(source, userId, message))
 
 # 對話引擎
@@ -45,5 +47,5 @@ def server_web():
 # heroku專用，偵測heroku給我們的port
 if __name__=="__main__":
     #app.run(host='0.0.0.0', port=os.environ['PORT']) # 執行於Heroku主機
-    #app.run(host="0.0.0.0",port=5001) # 執行於本地端
+    #app.run(host="0.0.0.0",port=5001) # 執行於本地端，指定port
     app.run() # 基本款

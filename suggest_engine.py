@@ -71,16 +71,76 @@ def state1_4to1_5(json_object):
     print('::推薦系統訊息:: in sugg.... state1_4to1_5 - finish')
     return json_object['json']
 
-def state1_5to2(json_object):
-    print('::推薦系統訊息:: in sugg.... state1_5to2 - start')
+
+def state1_5to2_1(json_object):
+    print('::推薦系統訊息:: in sugg.... state1_5to2_1 - start')
     # 讀取、更新購買禮物預算
     budget = json_object['outside']['msg']
-    json_object['json']['budget'] = int(budget)
+    json_object['json']['budget'] = [0, int(budget)]
 
     # 更新現在狀態
-    json_object['json']['cur_state'] = 'question_all'
-    print('::推薦系統訊息:: in sugg.... state1_5to2 - finish')
+    json_object['json']['cur_state'] = '9question'
+    print('::推薦系統訊息:: in sugg.... state1_5to2_1 - finish')
     return json_object['json']
+
+
+def state2_1to2_2(json_object):
+    print('::推薦系統訊息:: in sugg.... state2_1to2_2 - start')
+
+    try:
+        # 讀取、更新選擇的9question
+        json_object['json']['9question'] = json_object['outside']['msg'].split('_')[1]
+
+    except Exception as e:
+        print(e)
+        return json_object['json']
+
+    # 更新現在狀態
+    json_object['json']['cur_state'] = '6question'
+    print('::推薦系統訊息:: in sugg.... state2_1to2_2 - finish')
+    return json_object['json']
+
+
+def state2_2to2_3(json_object):
+    print('::推薦系統訊息:: in sugg.... state2_2to2_3 - start')
+
+    try:
+        # 讀取、更新選擇的9question
+        json_object['json']['6question'] = json_object['outside']['msg'].split('_')[1]
+
+    except Exception as e:
+        print(e)
+        return json_object['json']
+
+    # 更新現在狀態
+    json_object['json']['cur_state'] = 'open_question'
+    print('::推薦系統訊息:: in sugg.... state2_2to2_3 - finish')
+    return json_object['json']
+
+
+def state2_3to3(json_object):
+    print('::推薦系統訊息:: in sugg.... state2_3to3 - start')
+
+    try:
+        # 讀取、更新選擇的9question
+        category = json_object['outside']['msg']
+        json_object['json']['open_question'] = category
+    except Exception as e:
+        print(e)
+        return json_object['json']
+
+    # 呼叫產品服務A
+    response = callAPITags(json_object['json']['conds'])
+    # 更新下一個TAG
+    json_object['json']['next_tag'] = response['next_tag']
+    # 更新產品數量
+    json_object['json']['product_cnt'] = response['product_cnt']
+    # 更新現在狀態
+    json_object['json']['cur_state'] = 'first_question'
+
+    print('::推薦系統訊息:: in sugg.... state2_3to3 - finish')
+    return json_object['json']
+
 
 def state1to2(json_object):
     print('::推薦系統訊息:: in sugg.... state1to2 - start')
@@ -102,7 +162,7 @@ def state1to2(json_object):
 
     # 讀取、更新購買禮物預算
     budget = json_object['outside']['msg']['budget']
-    json_object['json']['budget'] = int(budget)
+    json_object['json']['budget'] = budget
 
     # 更新現在狀態
     # json_object['json']['cur_state'] = 'ask_interest'
@@ -242,26 +302,40 @@ def decisionmix(json_object):
 
 
 # 主程式，系統會先跑這支函式 ========================
-def main(source,userdata):
+def main(source, json_object):
     # 先整理對話引擎傳來的 使用者資料&前端訊息
-    try:
-        # 使用者資料
-        user_msg  = userdata["json"]
-        print(" 讀取JSON")
-        # 前端訊息
-        front_input  = userdata["outside"]
-        print(" 讀取OUTSIDE")
-        # 裝後面要用的參數
-        json_object = {"json":user_msg, "outside":front_input}
-    except Exception as e:
-        print(f'::SYS錯誤訊息::\n{e}\n==對話系統傳來資料不符================================')
-        return '\n\n', e
-    print(f"::SYS訊息:: 輸入參數 {json_object}")
+
+    # 使用者資料
+    # try:
+    #     user_msg  = userdata["json"]
+    #     print(" 讀取JSON")
+    # except Exception as e:
+    #     print(f'::SYS錯誤訊息:: 沒有得到使用者訊息\n{e}\n== 對話系統傳來資料不符 ================================')
+    #     return '\n\n', e
+    #
+    #     # 前端訊息
+    # try:
+    #     front_input  = userdata["outside"]['msg']
+    #     print(" 讀取OUTSIDE")
+    #     # 裝後面要用的參數
+    #     json_object = {"json":user_msg, "outside":front_input}
+    # except Exception as e:
+    #     print(f'::SYS錯誤訊息::\n{e}\n== 對話系統傳來資料不符 ================================')
+    #     return '\n\n', e
+    # print(f"::SYS訊息:: 輸入參數 {json_object}")
 
     # 根據現在的狀態(cur_state)進入function
     cur_state = json_object['json']['cur_state']
+
+    # Web 專屬流程
     if cur_state == 'end_conversation' and source == 'web':
         json_return = state6to1(json_object)
+    elif cur_state == 'basic_info':
+        json_return = state1to2(json_object)
+    elif cur_state == 'question_all':
+        json_return = state2to3(json_object)
+
+    # LineBot 專屬流程
     elif cur_state == 'end_conversation' and source == 'linebot':
         json_return = state6to1_1(json_object)
     elif cur_state == 'basic_info_1':
@@ -273,16 +347,18 @@ def main(source,userdata):
     elif cur_state == 'basic_info_4':
         json_return = state1_4to1_5(json_object)
     elif cur_state == 'basic_info_5':
-        json_return = state1_5to2(json_object)
-
-    elif cur_state == 'basic_info':
-        json_return = state1to2(json_object)
-
-    elif cur_state == 'question_all':
-        json_return = state2to3(json_object)
+        json_return = state1_5to2_1(json_object)
+    elif cur_state == '9question':
+        json_return = state2_1to2_2(json_object)
+    elif cur_state == '6question':
+        json_return = state2_2to2_3(json_object)
+    elif cur_state == 'open_question' and source == 'linebot':
+        json_return = state2_3to3(json_object)
 
     elif cur_state == 'ask_interest':
         json_return = state2to3(json_object)
+
+    # 通用流程
     elif cur_state == 'first_question':
         json_return = decisionmix(json_object)
     #elif cur_state == 'question_loop_False':
