@@ -1,0 +1,16 @@
+{
+    "userId": "test0919003",
+    "cur_state": "end_conversation",
+    "subject": "None",
+    "gender": "None",
+    "age": "99",
+    "relationship": "仇人",
+    "budget": 500,
+    "9question": "None",
+    "6question": "None",
+    "open_question": "None",
+    "interested_things": "",
+    "conds": [],
+    "next_tag": "None",
+    "product_cnt": -1
+}

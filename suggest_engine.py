@@ -98,16 +98,16 @@ def state1to2(json_object):
 
     # 讀取、更新收禮者關係
     relationship = json_object['outside']['msg']['relationship']
-    json_object['json']['age'] = relationship
+    json_object['json']['relationship'] = relationship
 
     # 讀取、更新購買禮物預算
     budget = json_object['outside']['msg']['budget']
     json_object['json']['budget'] = int(budget)
 
     # 更新現在狀態
-    json_object['json']['cur_state'] = 'ask_interest'
+    # json_object['json']['cur_state'] = 'ask_interest'
     # 之後開放
-    #json_object['json']['cur_state'] = 'question_all'
+    json_object['json']['cur_state'] = 'question_all'
     print('::推薦系統訊息:: in sugg.... state1to2 - finish')
     return json_object['json']
 
